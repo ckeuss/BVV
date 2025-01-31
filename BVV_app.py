@@ -10,14 +10,13 @@ from src.functions import fetch_agenda_data
 import streamlit as st
 from pandas import json_normalize
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 import plotly.express as px
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from PIL import Image
-import io
 import requests
-import geopandas as gpd
 import pydeck as pdk
 from shapely.geometry import mapping
 
@@ -33,22 +32,21 @@ col1, col2 = st.columns(2)
 
 # Text
 col1.markdown("# BVV Berlin")
-col1.markdown("Die ALLRIS-Schnittstelle (Allgemeines Ratsinformationssystem) wird von vielen Kommunen in Deutschland für das Rats- und Sitzungsmanagement genutzt, um Informationen zu politischen Gremien, Ausschüssen, Sitzungen und Beschlüssen zu verwalten und öffentlich zugänglich zu machen. Die offenen Daten können über die API im [OPARL-Standard](https://oparl.org/spezifikation/online-ansicht/) abgerufen und weiterverarbeitet werden. Diese BVV-APP nutzt die Daten der 12 Berliner Bezirke zu den Bezirksverordnetenversammlungen (BVV) und ermöglicht einen Überblick über die Ausschüsse und Fraktionen sowie die aktuellen Bezirksverordneten und deren Rollen. Zudem visualisiert sie die Entwicklung der Geschlechterverteilung innerhalb der BVV im Laufe der Zeit. Eine integrierte Stichwortsuche erleichtert das Auffinden von Sitzungen mit bestimmten Tagesordnungspunkten – vorausgesetzt, die Bezirke stellen diese Informationen zur Verfügung. Weitere Informationen zu den API-Schnittstellen der Bezirke finden sich im Berlin Open Data Portal, beispielsweise [hier](https://daten.berlin.de/datensaetze/schnittstelle-zum-informationssystem-der-bvv-berlin-mitte) für den Bezirk Mitte.")
+col1.markdown("Die ALLRIS-Schnittstelle (Allgemeines Ratsinformationssystem) wird von vielen Kommunen in Deutschland für das Rats- und Sitzungsmanagement genutzt, um Informationen zu politischen Gremien, Ausschüssen, Sitzungen und Beschlüssen zu verwalten und öffentlich zugänglich zu machen. Die offenen Daten können über die API im [OPARL-Standard](https://oparl.org/spezifikation/online-ansicht/) abgerufen und weiterverarbeitet werden. Diese BVV-App nutzt die Daten der 12 Berliner Bezirke zu den Bezirksverordnetenversammlungen (BVV) und ermöglicht einen Überblick über die Ausschüsse und Fraktionen sowie die aktuellen Bezirksverordneten und deren Rollen. Zudem visualisiert sie die Entwicklung der Geschlechterverteilung innerhalb der BVV im Laufe der Zeit. Eine integrierte Stichwortsuche erleichtert das Auffinden von Sitzungen mit bestimmten Tagesordnungspunkten – vorausgesetzt, die Bezirke stellen diese Informationen zur Verfügung. Weitere Informationen zu den API-Schnittstellen der Bezirke finden sich im Berlin Open Data Portal, beispielsweise [hier](https://daten.berlin.de/datensaetze/schnittstelle-zum-informationssystem-der-bvv-berlin-mitte) für den Bezirk Mitte.")
 
 # Image
 col2.image("https://upload.wikimedia.org/wikipedia/commons/b/b1/Berlin_Bezirk_Mitte_949-831-%28118%29.jpg", caption = "Skyline von Berlin-Mitte, Lotse, CC BY-SA 3.0, via Wikimedia Commons")
 
-
-###--------------------------------------------------------------------------###
-### Map based on selection                                                   ###
-###--------------------------------------------------------------------------###
-
-# Select district
+# Filter data based on selected district
 district = ["Mitte", "Charlottenburg-Wilmersdorf", "Friedrichshain-Kreuzberg","Lichtenberg", "Marzahn-Hellersdorf", "Neukoelln", "Pankow", "Reinickendorf", "Steglitz-Zehlendorf", "Tempelhof-Schoeneberg", "Treptow-Koepenick"]
 
 selected_district = col1.selectbox(
     "Wähle ein Bezirk:", district                 
 )
+
+###--------------------------------------------------------------------------###
+### Map based on selection                                                   ###
+###--------------------------------------------------------------------------###
 
 # Load district geometry dataset
 # pre-processed geojson-file based on open data from geoportal Berlin (https://gdi.berlin.de/viewer/main/) 
@@ -477,7 +475,7 @@ if len(agenda_item_names) > 0:
 
                         # Extract location description 
                         location = meeting_data.get("location", {})
-                        location_description = location.get("description", "Unknown") 
+                        location_description = location.get("description", "Unbekannt") 
 
                     except Exception as e:
                         print(f"Failed to fetch location for meeting {meeting_url}: {e}")

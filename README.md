@@ -1,6 +1,23 @@
 # BVV Berlin
 
-Die ALLRIS-Schnittstelle (Allgemeines Ratsinformationssystem) wird von vielen Kommunen in Deutschland für das Rats- und Sitzungsmanagement genutzt, um Informationen zu politischen Gremien, Ausschüssen, Sitzungen und Beschlüssen zu verwalten und öffentlich zugänglich zu machen. Die offenen Daten können über die API im [OPARL-Standard](https://oparl.org/spezifikation/online-ansicht/) abgerufen und weiterverarbeitet werden. Diese BVV-APP nutzt die Daten der 12 Berliner Bezirke zu den Bezirksverordnetenversammlungen (BVV) und ermöglicht einen Überblick über die Ausschüsse und Fraktionen sowie die aktuellen Bezirksverordneten und deren Rollen. Zudem visualisiert sie die Entwicklung der Geschlechterverteilung innerhalb der BVV im Laufe der Zeit. Eine integrierte Stichwortsuche erleichtert das Auffinden von Sitzungen mit bestimmten Tagesordnungspunkten – vorausgesetzt, die Bezirke stellen diese Informationen zur Verfügung. Weitere Informationen zu den API-Schnittstellen der Bezirke finden sich im Berlin Open Data Portal, beispielsweise [hier](https://daten.berlin.de/datensaetze/schnittstelle-zum-informationssystem-der-bvv-berlin-mitte) für den Bezirk Mitte.
+The ALLRIS interface (General Council Information System) is used by many local authorities in Germany for council and meeting management in order to manage information on political bodies, committees, meetings and resolutions and make it publicly accessible. The open data can be retrieved and further processed via the API in the OPARL standard. This BVV-App uses the district council data of the 12 Berlin districts and provides an overview of the committees and parliamentary groups as well as the current district representatives and their roles. It also visualises the development of gender distribution within the district councils over time. An integrated keyword search makes it easier to find meetings with specific agenda items - provided that the districts make this information available.
+
+## Prerequisites
+
+Ensure that the following prerequisites are met to run the scripts in this repository:
+
+- Python 3.x
+- Streamlit (version 1.41.1)
+- Required Python libraries: streamlit, requests, pandas, geopandas, pydeck, shapely, numpy, plotly, matplotlib, wordcloud, PIL
+
+## Data
+
+The data used for this app can be found in the [Berlin Open Data Portal](https://daten.berlin.de/).
+Find the OPARL documentation [here](https://oparl.org/spezifikation/online-ansicht/).
+
+## Access to the BVV App
+
+
 
 
 
