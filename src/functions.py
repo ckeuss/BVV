@@ -40,14 +40,15 @@ def fetch_data(url):
 
 # Fetch paginated api data
 @st.cache_data(show_spinner=True)
-def fetch_pag_data(url, retries=3, delay=5):
+def fetch_pag_data(url, retries=2, delay=3):
     """
     Fetch paginated data from the base URL and returns
     a list containing all the data from the paginated responses.
-    
-    - url (str): The URL to fetch data from.
-    - retries (int): The number of times to retry in case of an error.
-    - delay (int): Delay (in seconds) between retries.
+
+    Args:
+    - base URL
+    - retries: The number of times to retry in case of an error.
+    - delay: Delay (in seconds) between retries.
     """
     all_data = []
 

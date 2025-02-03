@@ -370,14 +370,12 @@ st.write(" ")
 ### Load meetings data and agenda items                                      ###
 ###--------------------------------------------------------------------------###
 
+# most recent meeting data
 meetingUrl = bodiesData["data"][0]["meeting"]
-
 meetingData = fetch_data(meetingUrl)
-
 
 #agendaItems
 agendaData = fetch_agenda_data(meetingData)
-
 
 # Initialize agenda_item_names
 agenda_item_names = []
@@ -411,7 +409,7 @@ col3, col4 = st.columns(2)
 if len(agenda_item_names) > 0:
     with col3:
         st.subheader("Sitzungen und Tagesordnungspunkte")
-        st.markdown("##### Finde Sitzungsinformationen zu Tagesordnungspunkten, die dich interessieren:")
+        st.markdown("##### Durchsuche die aktuellsten Sitzungsdaten und filtere nach einem Tagesordnungspunkt, der dich interessiert:")
         stopwords = set([
             "der", "die", "das", "und", "zur", "von", "den", "im", "des", "aus", "einer",
             "zu", "auf", "für", "mit", "nicht", "bei", "über", "als", "es", "dem","eine",
@@ -453,7 +451,7 @@ if len(agenda_item_names) > 0:
 if len(agenda_item_names) > 0:
   
     # User input for the search word
-    word_to_search = col3.text_input("Bitte ein Suchwort eingeben (z.B. Verkehr, Kita, Wohnen, Haushalt etc.):", "")
+    word_to_search = col3.text_input("Bitte ein Suchwort eingeben (z.B. Verkehr, Bildung, Wohnen, Haushalt etc.):", "")
 
     # Check if a search word is provided
     if word_to_search:
