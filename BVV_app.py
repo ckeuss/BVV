@@ -475,7 +475,7 @@ if len(agenda_item_names) > 0:
 
                         # Extract location description 
                         location = meeting_data.get("location", {})
-                        location_description = location.get("description", "Unbekannt") 
+                        location_description = location.get("description") or "unbekannt"
 
                     except Exception as e:
                         print(f"Failed to fetch location for meeting {meeting_url}: {e}")
