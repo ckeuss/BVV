@@ -203,7 +203,13 @@ st.write(" ")
 ###--------------------------------------------------------------------------###
 
 st.subheader(f"Aktuelle Mitglieder der BVV {selected_district.title()} und ihre Rollen")
-st.dataframe(currentMembers[["name", "formOfAddress", "role", "votingRight", "orgaName"]].reset_index(drop=True), use_container_width=True)
+st.dataframe(currentMembers[["name", "formOfAddress", "role", "votingRight", "orgaName"]].rename(columns={
+        "name": "Name",
+        "formOfAddress": "Anrede",
+        "role": "Rolle",
+        "votingRight": "Stimmrecht",
+        "orgaName": "Ausschuss / Fraktion"
+    }).reset_index(drop=True), use_container_width=True)
 
 st.write(" ")
 
@@ -479,12 +485,12 @@ if len(agenda_item_names) > 0:
                         print(f"Failed to fetch location for meeting {meeting_url}: {e}")
 
                     matching_items.append({
-                        "Meeting Name": meeting["name"],
-                        "Start Time": meeting["start"],
-                        "End Time": meeting["end"],
-                        "Location": location_description,
-                        "Agenda Item": agenda_item["name"],
-                        "Public": "Yes" if agenda_item["public"] else "No"
+                        "Name der Sitzung": meeting["name"],
+                        "Startzeitpunkt": meeting["start"],
+                        "Endzeitpunkt": meeting["end"],
+                        "Ort": location_description,
+                        "Tagesordnungspunkt": agenda_item["name"],
+                        "Öffentlich?": "Ja" if agenda_item["public"] else "Nein"
                     })
 
         # Display the matching results
