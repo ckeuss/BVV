@@ -41,7 +41,7 @@ col2.image("https://upload.wikimedia.org/wikipedia/commons/b/b1/Berlin_Bezirk_Mi
 district = ["Mitte", "Charlottenburg-Wilmersdorf", "Friedrichshain-Kreuzberg","Lichtenberg", "Marzahn-Hellersdorf", "Neukoelln", "Pankow", "Reinickendorf", "Steglitz-Zehlendorf", "Tempelhof-Schoeneberg", "Treptow-Koepenick"]
 
 selected_district = col1.selectbox(
-    "Wählen Sie ein Bezirk:", district                 
+    "Wähle ein Bezirk:", district                 
 )
 
 ###--------------------------------------------------------------------------###
@@ -411,7 +411,7 @@ col3, col4 = st.columns(2)
 if len(agenda_item_names) > 0:
     with col3:
         st.subheader("Sitzungen und Tagesordnungspunkte")
-        st.markdown("##### Filtern Sie die Sitzungsinformationen nach Tagesordnungspunkten:")
+        st.markdown("##### Finde Sitzungsinformationen zu Tagesordnungspunkten, die dich interessieren:")
         stopwords = set([
             "der", "die", "das", "und", "zur", "von", "den", "im", "des", "aus", "einer",
             "zu", "auf", "für", "mit", "nicht", "bei", "über", "als", "es", "dem","eine",
