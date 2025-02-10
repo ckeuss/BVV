@@ -120,8 +120,7 @@ persons_with_membership = json_normalize(
     persons_with_membership,
     "membership",  
     ["name", "familyName", "givenName", "formOfAddress"],  # Keys to extract
-    errors="ignore",  # Ignore missing meta keys
-)
+    errors="ignore")
 
 
 ###--------------------------------------------------------------------------###
@@ -130,24 +129,46 @@ persons_with_membership = json_normalize(
 
 orgaData = fetch_orga_data(persons_with_membership)
 
-st.subheader("Ausschüsse und Fraktionen")
+st.subheader("Bezirksverordnetenversammlung, Ausschüsse und Fraktionen")
+st.caption("Übersicht aller Organisationen mit Angabe zu Kurzform, Kategorie und Klassifikation. Klicke auf 'Mitglieder anzeigen', um alle aktuellen Mitglieder einzusehen.")
 
-# Distribute organizations on three columns and add caption
-cols = st.columns(3)
-for idx, row in orgaData.iterrows():
-    with cols[idx % 3]:
-        st.markdown(f"**{row['orgaName']}**")
-        st.caption(f"{row['shortName']} | {row['orgaType']} | {row['classification']}")
+# Current members
+members = pd.merge(persons_with_membership, orgaData, on= "organization", how="left")
+currentMembers = members[members["endDate"].isna()]
+
+# Current orga data
+orgaData["orga_endDate"] = pd.to_datetime(orgaData["orga_endDate"], errors="coerce")
+orgaData = orgaData[(orgaData["orga_endDate"].isna())]
+
+# Create grid layout for evenly distributed orga names
+for i in range(0, len(orgaData), 3):
+    cols = st.columns(3)
+    for col, (_, row) in zip(cols, orgaData.iloc[i:i + 3].iterrows()):
+        with col:
+            st.markdown(f"**{row['orgaName']}**")
+            st.caption(f"{row['shortName']} | {row['orgaType']} | {row['classification']}")
+        
+            # Toggle to show names and roles
+            with st.expander("Mitglieder anzeigen"):
+                # Filter by organization
+                members = currentMembers[currentMembers["orgaName"] == row["orgaName"]]
+                
+                # Display names and roles
+                if not members.empty:
+                    member_list = ", ".join(f"{name} ({role})" for name, role in zip(members["name"], members["role"]))
+                    st.markdown(member_list)
+                else:
+                    st.caption("Keine Mitglieder verfügbar.")
 
 
 ###--------------------------------------------------------------------------###
 ### Current number of persons by Orga                                        ###
 ###--------------------------------------------------------------------------###
 
-st.subheader("Aktuelle Mitgliederanzahl je Ausschuss bzw. Fraktion")
+st.subheader("Aktuelle Mitgliederanzahl je Organisation")
 
+# Current members
 members = pd.merge(persons_with_membership, orgaData, on= "organization", how="left")
-
 currentMembers = members[members["endDate"].isna()]
 
 noMembers_perOrga = currentMembers["orgaName"].value_counts().reset_index()
@@ -180,38 +201,22 @@ st.plotly_chart(fig, use_container_width = True)
 ### Current representatives                                                  ###
 ###--------------------------------------------------------------------------###
 
-# Filter current members in BVV
-BVV = currentMembers[(currentMembers["classification"] == "BVV") | (currentMembers["classification"] == "Bezirksparlament") | (currentMembers["classification"] == "Bezirk") | (currentMembers["classification"] == "Bezirksverordnetenversammlung") | (currentMembers["classification"] == "Bezirksverordnete") | (currentMembers["classification"] == "Parlament") | (currentMembers["classification"] == "Stadtbezirk")]
+# # Filter current members in BVV
+# BVV = currentMembers[(currentMembers["classification"] == "BVV") | (currentMembers["classification"] == "Bezirksparlament") | (currentMembers["classification"] == "Bezirk") | (currentMembers["classification"] == "Bezirksverordnetenversammlung") | (currentMembers["classification"] == "Bezirksverordnete") | (currentMembers["classification"] == "Parlament") | (currentMembers["classification"] == "Stadtbezirk")]
 
-st.write(" ")
+# st.write(" ")
 
-st.subheader(f"Aktuelle Mitglieder der BVV {selected_district.title()}")
+# st.subheader(f"Aktuelle Mitglieder der BVV {selected_district.title()}")
 
-# Distribute names on three columns
-cols = st.columns(3) 
-names = sorted(BVV["name"].tolist())
+# # Distribute names on three columns
+# cols = st.columns(3) 
+# names = sorted(BVV["name"].tolist())
 
-for i, name in enumerate(names):
-    col = cols[i % 3]
-    col.write(f"{i + 1}. {name}") #Add numbers
+# for i, name in enumerate(names):
+#     col = cols[i % 3]
+#     col.write(f"{i + 1}. {name}") #Add numbers
 
-st.write(" ")
-
-
-###--------------------------------------------------------------------------###
-### Current members and their roles                                          ###
-###--------------------------------------------------------------------------###
-
-st.subheader(f"Aktuelle Mitglieder der BVV {selected_district.title()} und ihre Rollen")
-st.dataframe(currentMembers[["name", "formOfAddress", "role", "votingRight", "orgaName"]].rename(columns={
-        "name": "Name",
-        "formOfAddress": "Anrede",
-        "role": "Rolle",
-        "votingRight": "Stimmrecht",
-        "orgaName": "Ausschuss / Fraktion"
-    }).reset_index(drop=True), use_container_width=True)
-
-st.write(" ")
+# st.write(" ")
 
 
 
@@ -222,23 +227,24 @@ st.write(" ")
 # Filter all past and current members by BVV
 BVV_all_years = members[(members["classification"] == "BVV") | (members["classification"] == "Bezirksparlament") | (members["classification"] == "Bezirk") | (members["classification"] == "Bezirksverordnetenversammlung") | (members["classification"] == "Bezirksverordnete") | (members["classification"] == "Parlament") | (members["classification"] == "Stadtbezirk")]
 
+# Datetime
+BVV_all_years["startDate"] = pd.to_datetime(BVV_all_years["startDate"], errors="coerce")
+BVV_all_years["endDate"] = pd.to_datetime(BVV_all_years["endDate"], errors="coerce")
+
+# Year range
+min_year = BVV_all_years["startDate"].dt.year.min()
+max_year = pd.to_datetime("today").year
+
+min_year = int(min_year)
+max_year = int(max_year)
+
+st.subheader(f"Entwicklung der Geschlechterverteilung in der BVV {selected_district.title()} von {min_year} bis {max_year}")
+
 # Check if "formOfAddress" column exists
 if "formOfAddress" not in BVV_all_years.columns or BVV_all_years["formOfAddress"].isnull().all():
     st.error("Error: 'formOfAddress' column is missing or contains only invalid values.")
 else:
-    # Datetime
-    BVV_all_years["startDate"] = pd.to_datetime(BVV_all_years["startDate"], errors="coerce")
-    BVV_all_years["endDate"] = pd.to_datetime(BVV_all_years["endDate"], errors="coerce")
- 
-    # Year range
-    min_year = BVV_all_years["startDate"].dt.year.min()
-    max_year = pd.to_datetime("today").year
-
-    min_year = int(min_year)
-    max_year = int(max_year)
-
-    st.subheader(f"Entwicklung der Geschlechterverteilung in der BVV von {min_year} bis {max_year}")
-
+    
     # List
     all_years_data = []
 
@@ -329,6 +335,7 @@ if "formOfAddress" not in currentMembers.columns or currentMembers["formOfAddres
     st.error("Error: 'formOfAddress' column is missing or contains only invalid values.")
 else:
     st.subheader("Durchschnittliche Anzahl an Rollen pro Person nach Geschlecht")
+    st.caption("Einige Mitglieder der BVV übernehmen weitere Funktionen in Ausschüssen und Fraktionen. In der folgenden Visualisierung wird die durchschnittliche Anzahl an Rollen nach Geschelcht dargestellt.")
 
     gender_role_counts = currentMembers.groupby(["formOfAddress", "name"]).size().reset_index(name="roles")
     # Map gender
@@ -376,6 +383,8 @@ st.write(" ")
 ### Load meetings data and agenda items                                      ###
 ###--------------------------------------------------------------------------###
 
+st.subheader("Sitzungen und Tagesordnungspunkte")
+
 # most recent meeting data
 meetingUrl = bodiesData["data"][0]["meeting"]
 meetingData = fetch_data(meetingUrl)
@@ -391,7 +400,7 @@ if not agendaData or all(
     len(meeting.get("agendaItems", [])) == 0 for meeting in agendaData
 ):
     # Show an error message if no agenda items are found
-    st.error(f"No agenda items found for {selected_district}.")
+    st.error(f"Error: No agenda items found for {selected_district}.")
 else:
     # Extract agenda item names
     agenda_item_names = [
@@ -414,8 +423,7 @@ col3, col4 = st.columns(2)
 
 if len(agenda_item_names) > 0:
     with col3:
-        st.subheader("Sitzungen und Tagesordnungspunkte")
-        st.markdown("##### Durchsuche die aktuellsten Sitzungsdaten und filtere nach einem Tagesordnungspunkt, der dich interessiert:")
+        st.caption("Durchsuche die aktuellsten Sitzungsdaten und filtere nach einem Tagesordnungspunkt, der dich interessiert:")
         stopwords = set([
             "der", "die", "das", "und", "zur", "von", "den", "im", "des", "aus", "einer",
             "zu", "auf", "für", "mit", "nicht", "bei", "über", "als", "es", "dem","eine",
