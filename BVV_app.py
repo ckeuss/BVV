@@ -27,18 +27,6 @@ from shapely.geometry import mapping
 
 st.set_page_config(layout= "wide")
 
-st.markdown("""
-    <style>
-    body {
-        background-color: white !important;
-    }
-    .stApp, .sidebar .sidebar-content {
-        background-color: white !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-
 col1, col2 = st.columns(2)
 
 # Text
