@@ -29,12 +29,11 @@ st.set_page_config(layout= "wide")
 
 st.markdown("""
     <style>
-    .stApp {
-        background-color: white;
+    body {
+        background-color: white !important;
     }
-
-    .sidebar .sidebar-content {
-        background-color: white;
+    .stApp, .sidebar .sidebar-content {
+        background-color: white !important;
     }
     </style>
     """, unsafe_allow_html=True)
