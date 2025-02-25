@@ -27,6 +27,18 @@ from shapely.geometry import mapping
 
 st.set_page_config(layout= "wide")
 
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: white;
+    }
+
+    .sidebar .sidebar-content {
+        background-color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 
 col1, col2 = st.columns(2)
 
@@ -317,7 +329,7 @@ else:
         legend_title_text="Legende"
     )
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 # Show dataset if checkbox
 if st.checkbox("Datensatz anzeigen"):
@@ -440,7 +452,7 @@ if len(agenda_item_names) > 0:
             width=800,  
             height=400,  
             background_color="white",  
-            colormap="Grays",  
+            colormap="Greys",  
             max_words=100,  
             stopwords=stopwords, 
             contour_color="black",  
